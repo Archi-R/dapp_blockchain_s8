@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.7.0 <0.9.0;
 // We have to specify what version of compiler this code will compile with
+
+import "hardhat/console.sol";
 contract todo {
 
     struct Task {
@@ -8,6 +10,10 @@ contract todo {
         string content;
         bool completed;
         uint createdAt;
+    }
+
+    constructor(string memory _test) {
+        console.log("Deploying a shit with :", _test);
     }
 
     mapping(uint => Task) public tasks;
