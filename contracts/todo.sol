@@ -3,8 +3,8 @@ pragma solidity >=0.7.0 <0.9.0;
 // We have to specify what version of compiler this code will compile with
 
 import "hardhat/console.sol";
-contract todo {
 
+contract todo {
     struct Task {
         uint id;
         string content;
@@ -12,15 +12,16 @@ contract todo {
         uint createdAt;
     }
 
-    constructor(string memory _test) {
-        console.log("Deploying a shit with :", _test);
-    }
-
     mapping(uint => Task) public tasks;
     uint public taskCount;
 
+    // Constructor to initialize taskCount to zero
+    constructor() {
+        taskCount = 0;
+    }
+
     function createTask(string memory _content) public {
-        taskCount ++;
+        taskCount++;
         tasks[taskCount] = Task(taskCount, _content, false, block.timestamp);
         emit TaskCreated(taskCount, _content, false, block.timestamp);
     }
@@ -43,5 +44,4 @@ contract todo {
         uint id,
         bool completed
     );
-
 }
