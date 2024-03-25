@@ -1,10 +1,10 @@
 import './App.css';
 import Web3 from 'web3';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import TodoList from './TodoList'
-import { ethers } from 'ethers';
 import TodoListABI from './artifacts/contracts/todo.sol/todo.json';
 const todoAdress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+import DOMPurify from 'dompurify';
 
 class App extends React.Component {
   componentWillMount() {
@@ -42,8 +42,11 @@ class App extends React.Component {
   }
 
   createTask(content) {
+
+    let safeimput = DOMPurify.sanitize(content);
+
     this.setState({ loading: true })
-    this.state.todoList.methods.createTask(content).send({ from: this.state.account })
+    this.state.todoList.methods.createTask(safeimput).send({ from: this.state.account })
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
   })
@@ -51,7 +54,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+        <div>
         <div className="container-fluid">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex justify-content-center">
