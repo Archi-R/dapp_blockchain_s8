@@ -4,7 +4,7 @@ import React from 'react';
 import TodoList from './TodoList'
 import TodoListABI from './artifacts/contracts/todo.sol/todo.json';
 import DOMPurify from 'dompurify';
-const todoAdress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const todoAdress = "0x1503bB6D2692043e4147fE89DD825E38689766bf";
 
 class App extends React.Component {
   componentWillMount() {
@@ -34,6 +34,8 @@ class App extends React.Component {
     this.setState({ todoList })
     const taskCount = await todoList.methods.taskCount().call()
     this.setState({ taskCount })
+    // vider les tâches
+    this.setState({ tasks: [] })
     for (var i = 1; i <= taskCount; i++) {
       const task = await todoList.methods.tasks(i).call()
       this.setState({
@@ -53,6 +55,7 @@ class App extends React.Component {
       loading: true
     }
     this.createTask = this.createTask.bind(this)
+    this.toggleTaskCompleted = this.toggleTaskCompleted.bind(this);
   }
 
   async createTask(content) {
@@ -80,9 +83,41 @@ class App extends React.Component {
       gasPrice: web3.utils.toWei('10', 'gwei')
     })
         .once('receipt', (receipt) => {
-          this.setState({loading: false})
+          this.setState({loading: false});
+          this.loadBlockchainData();
         })
   }
+
+  async toggleTaskCompleted(taskId) {
+    let provider;
+    if (window.ethereum) {
+      provider = window.ethereum;
+    } else if (window.web3) {
+      provider = window.web3.currentProvider;
+    } else {
+      provider = new Web3.providers.HttpProvider("http://localhost:8545");
+    }
+    const web3 = new Web3(provider);
+
+    // Assurez-vous que l'état contient la bonne instance du contrat et le compte de l'utilisateur
+    if (this.state.todoList && this.state.account) {
+      this.setState({loading: true});
+      await this.state.todoList.methods.toggleCompleted(taskId).send({
+        from: this.state.account,
+        gasPrice: web3.utils.toWei('10', 'gwei')
+      })
+          .once('receipt', () => {
+            this.setState({loading: false});
+            // Recharger les tâches
+            this.loadBlockchainData();
+          })
+          .catch((error) => {
+            console.error("Erreur lors du changement de l'état de la tâche", error);
+            this.setState({loading: false});
+          });
+    }
+  }
+
 
   render() {
     return (
@@ -90,7 +125,7 @@ class App extends React.Component {
         <div className="container-fluid">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex justify-content-center">
-              {this.state.loading ? <div id="loader" className="text-center"><p className="text-center">Loading...........</p></div> : <TodoList tasks={this.state.tasks} createTask={this.createTask}/>}
+              {this.state.loading ? <div id="loader" className="text-center"><p className="text-center">Loading...........</p></div> : <TodoList tasks={this.state.tasks} createTask={this.createTask} toggleTaskCompleted={this.toggleTaskCompleted}/>}
             </main>
           </div>
         </div>

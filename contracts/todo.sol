@@ -27,9 +27,10 @@ contract todo {
     }
 
     function toggleCompleted(uint _id) public {
-        Task memory _task = tasks[_id];
+        // security
+        require(_id > 0 && _id <= taskCount, "Task ID is invalid");
+        Task storage _task = tasks[_id];
         _task.completed = !_task.completed;
-        tasks[_id] = _task;
         emit TaskCompleted(_id, _task.completed);
     }
 

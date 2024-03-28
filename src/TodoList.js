@@ -18,7 +18,11 @@ class TodoList extends Component {
             return(
               <div class="taskTemplate" className="checkbox" key={key}>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() => this.props.toggleTaskCompleted(task.id)} // Utilisez la méthode ici
+                    />
                   <span class="content">{task.content}</span>
                 </label>
                 
