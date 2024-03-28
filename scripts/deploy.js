@@ -1,7 +1,8 @@
-const { getCreateAddress } = require("ethers");
+//const { getCreateAddress, ethers} = require("ethers");
 const hre = require("hardhat");
 async function main() {
-  const Todo = await ethers.getContractFactory("todo");
+  const [deployer] = await hre.ethers.getSigners();
+  const Todo = await hre.ethers.getContractFactory("todo");
   const todo = await Todo.deploy();
   console.log("Todo deployed to:", todo.target);
 }

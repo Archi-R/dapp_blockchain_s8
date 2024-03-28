@@ -3,8 +3,8 @@ import Web3 from 'web3';
 import React from 'react';
 import TodoList from './TodoList'
 import TodoListABI from './artifacts/contracts/todo.sol/todo.json';
-const todoAdress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 import DOMPurify from 'dompurify';
+const todoAdress = "0x3C4B55B37Ad187D82829AD11F6011c702D61cD7F";
 
 class App extends React.Component {
   componentWillMount() {
@@ -13,7 +13,21 @@ class App extends React.Component {
 }
 
   async loadBlockchainData() {
-    const web3 = new Web3(window.ethereum || "http://localhost:8545")
+    let provider;
+    if (window.ethereum) {
+      provider = window.ethereum;
+      try {
+        // Demander à l'utilisateur l'autorisation de se connecter au portefeuille
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+      } catch (error) {
+        console.error("L'utilisateur a refusé de connecter le compte", error);
+      }
+    } else if (window.web3) {
+      provider = window.web3.currentProvider;
+    } else {
+      provider = new Web3.providers.HttpProvider("http://localhost:8545");
+    }
+    const web3 = new Web3(provider);
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
     const todoList = new web3.eth.Contract(TodoListABI.abi, todoAdress)
@@ -41,16 +55,34 @@ class App extends React.Component {
     this.createTask = this.createTask.bind(this)
   }
 
-  createTask(content) {
+  async createTask(content) {
+    let provider;
+    if (window.ethereum) {
+      provider = window.ethereum;
+      try {
+        // Demander à l'utilisateur l'autorisation de se connecter au portefeuille
+        await window.ethereum.request({method: 'eth_requestAccounts'});
+      } catch (error) {
+        console.error("L'utilisateur a refusé de connecter le compte", error);
+      }
+    } else if (window.web3) {
+      provider = window.web3.currentProvider;
+    } else {
+      provider = new Web3.providers.HttpProvider("http://localhost:8545");
+    }
+    const web3 = new Web3(provider);
 
     let safeimput = DOMPurify.sanitize(content);
 
-    this.setState({ loading: true })
-    this.state.todoList.methods.createTask(safeimput).send({ from: this.state.account })
-    .once('receipt', (receipt) => {
-      this.setState({ loading: false })
-  })
-}
+    this.setState({loading: true})
+    this.state.todoList.methods.createTask(safeimput).send({
+      from: this.state.account,
+      gasPrice: web3.utils.toWei('10', 'gwei')
+    })
+        .once('receipt', (receipt) => {
+          this.setState({loading: false})
+        })
+  }
 
   render() {
     return (
@@ -58,7 +90,7 @@ class App extends React.Component {
         <div className="container-fluid">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex justify-content-center">
-              {this.state.loading ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div> : <TodoList tasks={this.state.tasks} createTask={this.createTask}/>}
+              {this.state.loading ? <div id="loader" className="text-center"><p className="text-center">Loading...........</p></div> : <TodoList tasks={this.state.tasks} createTask={this.createTask}/>}
             </main>
           </div>
         </div>
