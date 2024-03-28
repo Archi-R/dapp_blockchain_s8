@@ -4,7 +4,7 @@ import React from 'react';
 import TodoList from './TodoList'
 import TodoListABI from './artifacts/contracts/todo.sol/todo.json';
 import DOMPurify from 'dompurify';
-const todoAdress = "0x3C4B55B37Ad187D82829AD11F6011c702D61cD7F";
+const todoAdress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 class App extends React.Component {
   componentWillMount() {
@@ -86,7 +86,7 @@ class App extends React.Component {
 
   render() {
     return (
-        <div>
+      <div>
         <div className="container-fluid">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex justify-content-center">

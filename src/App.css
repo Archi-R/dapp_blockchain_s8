@@ -1,5 +1,5 @@
 main {
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 form {
@@ -11,7 +11,41 @@ ul {
   margin-bottom: 0px;
 }
 
-#completedTaskList .content {
-  color: grey;
-  text-decoration: line-through;
+#taskList {
+  list-style-type: none;
+  padding: 0;
+  margin: auto;
+
+}
+
+#newTask{
+  width: 75%;
+  height: 25px;
+  padding: 12px;
+  color: #111111;
+  font-weight: 500;
+  position: relative;
+  border-radius: 5px;
+  font-family: 'Poppins',sans-serif;
+  font-size: 15px;
+  border: 2px solid #d1d3d4;
+}
+
+#newTask:focus{
+  outline: none;
+  border-color: #0d75ec;
+}
+
+.checkbox {
+  margin-bottom: 10px;
+}
+
+.checkbox .content {
+  margin-left: 5px;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+.checkbox input[type="checkbox"]:checked + .content {
+  color: #888; /* Couleur grise pour le texte */
+  text-decoration: line-through; /* Texte barré */
 }
